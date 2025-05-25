@@ -3,8 +3,11 @@ const express = require('express');
 const app = express();
 const User = require('./models/User');
 const Todo = require('./models/Todo');
+const authRoutes = require('./routes/auth');
 
-app.use(express.json()); // allows post/put to receive req.body
+app.use(express.json()); // allows post/put to receive req.body (middleware)
+
+app.use('/api', authRoutes); // routes
 
 // responds with "hello world" when a GET request is made to the homepage
 app.get('/', (req, res) => {
@@ -24,8 +27,8 @@ async function startServer() {
         await User.create({ name: 'Test User', password: 'abc123'});
         await Todo.create({ task: 'clean dishes', status: 'done' });
 
-        app.listen(3000, () => { // starts express server and tells it to listen for incoming https requests on port 3000
-            console.log('server running on port 3000');
+        app.listen(3000, '0.0.0.0', () => { // starts express server and tells it to listen for incoming https requests on port 3000
+            console.log('server running on port 3000'); // binding to 0.0.0.0 makes the app listen to all interfaces, which is needed when running in a docker container
         });
     } catch (err) {
         console.log('mongo connection error:', err); // handling startup connection issues
