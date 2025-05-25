@@ -4,10 +4,12 @@ const app = express();
 const User = require('./models/User');
 const Todo = require('./models/Todo');
 const authRoutes = require('./routes/auth');
+const todoRoutes = require('./routes/todos');
 
 app.use(express.json()); // allows post/put to receive req.body (middleware)
 
 app.use('/api', authRoutes); // routes
+app.use('/api', todoRoutes); // .use() method is used to mount middleware functions at a specific path, code that runs before the route handler can modify the req and res objects or handle certain logics (parsing, auth, loggin, etc)
 
 // responds with "hello world" when a GET request is made to the homepage
 app.get('/', (req, res) => {
