@@ -18,4 +18,19 @@ router.post('/register', async (req, res) => { // async allows me to use await t
     }
 });
 
+router.post('/login', async (req, res) => {
+    const {name, password} = req.body;
+    try{
+        const user = await User.findOne({ name }); // tries to find user name on the database
+        if (!user) { return res.status(401).json({ error: 'invalid credentials'});}
+        // console.log('user.password from DB:', user.password); // debug lines
+        // console.log('password from login form:', password); // debug lines
+        const isMatch = await bcrypt.compare(password, user.password); // compares the password with the user password
+        if (!isMatch) { return res.status(401).json({ error: 'invalid credentials '});}
+        res.status(200).json({ message: 'login successful', user}); // 200 sucessfull login
+    } catch (err) {
+        res.status(400).json({ error: err.message })
+    }
+});
+
 module.exports = router; // almost forgot about this and got an error saying that argument handler must be a function
