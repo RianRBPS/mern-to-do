@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 router.post('/register', async (req, res) => { // async allows me to use await to handle asynchronous operations like saving to database
     const { name, password } = req.body; // extracts name and password from the body of the incoming request
