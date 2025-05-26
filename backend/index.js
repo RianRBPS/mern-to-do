@@ -5,6 +5,7 @@ const User = require('./models/User');
 const Todo = require('./models/Todo');
 const authRoutes = require('./routes/auth');
 const todoRoutes = require('./routes/todos');
+require('dotenv').config
 
 app.use(express.json()); // allows post/put to receive req.body (middleware)
 
