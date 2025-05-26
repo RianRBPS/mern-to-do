@@ -4,6 +4,10 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+function generateAccessToken(user) {
+    return jwt.sign(user, process.env.TOKEN_SECRET, { expiresIn: '1800s' })
+}
+
 router.post('/register', async (req, res) => { // async allows me to use await to handle asynchronous operations like saving to database
     const { name, password } = req.body; // extracts name and password from the body of the incoming request
 
@@ -12,8 +16,9 @@ router.post('/register', async (req, res) => { // async allows me to use await t
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         const user = await User.create({ name, password: hashedPassword}); // tries to create a new user in the mongodb database using the User model, the await keyword tells node.js to pause here until the create operation finishes
+        const token = generateAccessToken( { name: req.body.name });
 
-        res.status(201).json(user); // sends back a 201 created status, meanign sucess
+        res.status(201).json({ user, token }); // sends back a 201 created status, meanign sucess
     } catch (err) {
         res.status(400).json({ error: err.message }); // if there's an error like missing fields or duplicate user it catches the error and sends back a 400 bad request status with the error message
     }
@@ -28,7 +33,8 @@ router.post('/login', async (req, res) => {
         // console.log('password from login form:', password); // debug lines
         const isMatch = await bcrypt.compare(password, user.password); // compares the password with the user password
         if (!isMatch) { return res.status(401).json({ error: 'invalid credentials '});}
-        res.status(200).json({ message: 'login successful', user}); // 200 sucessfull login
+        const token = generateAccessToken({ userId: user._id }) // imma be real honest the documentation for this is horrible and I don't realy understood how it works
+        res.status(200).json({ message: 'login successful', token, user}); // 200 sucessfull login
     } catch (err) {
         res.status(400).json({ error: err.message })
     }
