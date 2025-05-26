@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Todo = require('../models/Todo');
+const authenticateToken = require('../middleware/authMiddleware');
 
-router.post('/todos', async (req, res) => {
+router.post('/todos', authenticateToken, async (req, res) => {
     const { task, status } = req.body;
     try {
         const todo = await Todo.create({ task, status });
