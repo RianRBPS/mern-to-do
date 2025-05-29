@@ -16,7 +16,7 @@ router.post('/register', async (req, res) => { // async allows me to use await t
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         const user = await User.create({ name, password: hashedPassword}); // tries to create a new user in the mongodb database using the User model, the await keyword tells node.js to pause here until the create operation finishes
-        const token = generateAccessToken( { name: req.body.name });
+        const token = generateAccessToken( { userId: req.body.name });
 
         res.status(201).json({ user, token }); // sends back a 201 created status, meanign sucess
     } catch (err) {
