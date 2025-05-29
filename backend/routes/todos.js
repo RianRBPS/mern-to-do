@@ -13,4 +13,13 @@ router.post('/todos', authenticateToken, async (req, res) => {
     }
 })
 
+router.get('/todos', authenticateToken, async (req, res) => {
+    try {
+        const todos = await Todo.find({ userId: req.user.userId });
+        res.json(todos);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 module.exports = router;
