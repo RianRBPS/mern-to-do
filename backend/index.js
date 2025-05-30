@@ -5,7 +5,7 @@ const User = require('./models/User');
 const Todo = require('./models/Todo');
 const authRoutes = require('./routes/auth');
 const todoRoutes = require('./routes/todos');
-require('dotenv').config
+require('dotenv').config();
 
 app.use(express.json()); // allows post/put to receive req.body (middleware)
 
@@ -27,8 +27,8 @@ async function startServer() {
         console.log('connected to mongodb');
 
         // seed test data
-        await User.create({ name: 'Test User', password: 'abc123'});
-        await Todo.create({ task: 'clean dishes', status: 'done' });
+        const user = await User.create({ name: 'Test User', password: 'abc123'});
+        await Todo.create({ task: 'clean dishes', status: 'done', userId: user._id });
 
         app.listen(3000, '0.0.0.0', () => { // starts express server and tells it to listen for incoming https requests on port 3000
             console.log('server running on port 3000'); // binding to 0.0.0.0 makes the app listen to all interfaces, which is needed when running in a docker container
